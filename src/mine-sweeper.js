@@ -23,9 +23,39 @@ const { NotImplementedError } = require('../extensions/index.js');
  *  [1, 1, 1]
  * ]
  */
-function minesweeper(/* matrix */) {
-  throw new NotImplementedError('Not implemented');
-  // remove line with error and write your code here
+function minesweeper(matrix) {
+  function getMatrixElem(matrix, firstIndex, secondIndex) {
+    if (secondIndex === undefined) return firstIndex === null ? null : matrix[firstIndex];
+
+    return firstIndex === null || secondIndex === null ? null : matrix[firstIndex][secondIndex];
+  }
+
+  return matrix.map((arr, index, initialMatrix) => {
+    const downIndex = index + 1 === initialMatrix.length ? null : index + 1;
+    const upIndex = index - 1 < 0 ? null : index - 1;
+
+    return arr.map((_, i, initialArr) => {
+      let sum = 0;
+
+      const rightIndex = i + 1 === initialArr.length ? null : i + 1;
+      const leftIndex = i - 1 < 0 ? null : i - 1;
+
+      [
+        getMatrixElem(initialMatrix, upIndex, i),
+        getMatrixElem(initialMatrix, upIndex, rightIndex),
+        getMatrixElem(initialArr, rightIndex),
+        getMatrixElem(initialMatrix, downIndex, rightIndex),
+        getMatrixElem(initialMatrix, downIndex, i),
+        getMatrixElem(initialMatrix, downIndex, leftIndex),
+        getMatrixElem(initialArr, leftIndex),
+        getMatrixElem(initialMatrix, upIndex, leftIndex),
+      ].forEach((neighbor) => {
+        if (neighbor) sum++;
+      });
+
+      return sum;
+    });
+  });
 }
 
 module.exports = {
